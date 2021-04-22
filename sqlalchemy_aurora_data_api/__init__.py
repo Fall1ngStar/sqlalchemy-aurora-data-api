@@ -48,7 +48,9 @@ class _ADA_DATETIME_MIXIN:
         return process
 
     def bind_expression(self, value):
-        return cast(value, self.sa_type)
+        cast_expression = cast(value, self.sa_type)
+        cast_expression.type.timezone = value.type.timezone
+        return cast_expression
 
     def result_processor(self, dialect, coltype):
         def process(value):
@@ -74,6 +76,9 @@ class _ADA_DATETIME_MIXIN:
 class _ADA_DATE(_ADA_DATETIME_MIXIN, DATE):
     py_type = datetime.date
     sa_type = sqltypes.Date
+
+    def bind_expression(self, value):
+        return cast(value, self.sa_type)
 
 
 class _ADA_TIME(_ADA_DATETIME_MIXIN, TIME):
